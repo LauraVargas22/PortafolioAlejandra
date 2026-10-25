@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, MotionConfig, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { gallery, handmade, profile, services, timeline } from './data'
+import { gallery, handmade, handmadeLogo, profile, services, timeline } from './data'
+import { Catalog } from './components/Catalog'
 import { Coverflow } from './components/Coverflow'
 import { Magnetic, Reveal, SplitWords, Stagger, TiltCard } from './components/motion'
 import { EASE_OUT, SPRING_SOFT, staggerChild } from './components/motionTokens'
@@ -13,6 +14,7 @@ const navItems = [
   { id: 'servicios', label: 'Servicios' },
   { id: 'manualidades', label: 'Manualidades' },
   { id: 'galeria', label: 'Galería' },
+  { id: 'catalogo', label: 'Catálogo' },
 ] as const
 
 function useActiveSection(ids: readonly string[]) {
@@ -28,7 +30,7 @@ function useActiveSection(ids: readonly string[]) {
 }
 
 function Brand({ onClick }: { onClick?: () => void }) {
-  return <a className="brand" href="#inicio" onClick={onClick}><span className="brand-mark">A</span><span>atelier <strong>01</strong></span></a>
+  return <a className="brand" href="#inicio" onClick={onClick}><span className="brand-mark">A</span><span>Aleja<strong> Rojas</strong></span></a>
 }
 
 function Header() {
@@ -48,9 +50,9 @@ function Header() {
   }, [menuOpen])
 
   return <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
-    <Brand onClick={closeMenu} />
+    <a className="brand" href="/" onClick={closeMenu}><span className="brand-mark">A</span><span>Aleja<strong> Rojas</strong></span></a>
     <nav className="main-nav" aria-label="Navegación principal">
-      {navItems.map((item) => <a key={item.id} href={`#${item.id}`} aria-current={active === item.id ? 'location' : undefined}>
+      {navItems.map((item) => <a key={item.id} href={item.id === 'catalogo' ? '/catalogo' : `#${item.id}`} aria-current={active === item.id ? 'location' : undefined}>
         {active === item.id && <motion.span layoutId="nav-pill" className="nav-pill" transition={SPRING_SOFT} />}
         <span>{item.label}</span>
       </a>)}
@@ -64,10 +66,10 @@ function Header() {
       {menuOpen && <motion.nav id="mobile-nav" className="mobile-nav" aria-label="Navegación móvil" initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }} exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: 0.45, ease: EASE_OUT }}>
         <motion.ol initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.06, delayChildren: 0.12 } } }}>
           {[...navItems, { id: 'contacto', label: 'Contacto' }].map((item, index) => <motion.li key={item.id} variants={staggerChild}>
-            <a href={`#${item.id}`} onClick={closeMenu}><small>0{index + 1}</small>{item.label}</a>
+            <a href={item.id === 'catalogo' ? '/catalogo' : `#${item.id}`} onClick={closeMenu}><small>0{index + 1}</small>{item.label}</a>
           </motion.li>)}
         </motion.ol>
-        <p className="mobile-nav-foot">Estilismo integral · [Ciudad]</p>
+        <p className="mobile-nav-foot">Estilismo integral · Duitama, Boyacá</p>
       </motion.nav>}
     </AnimatePresence>
   </header>
@@ -113,7 +115,7 @@ function Hero() {
       <motion.p className="hero-specialty" initial={{ opacity: 0, transform: 'translateY(16px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.6 }}>
         <span className="specialty-label">Especialidad</span><RotatingWord words={services.map((service) => service.name)} />
       </motion.p>
-      <motion.p className="hero-intro" initial={{ opacity: 0, transform: 'translateY(16px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.7 }}>Un espacio para sentirte tú, con intención. [Nombre de la estilista] crea looks honestos, cuidados y pensados para acompañarte.</motion.p>
+      <motion.p className="hero-intro" initial={{ opacity: 0, transform: 'translateY(16px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.7 }}>Soy Alejandra Rojas, estilista profesional. En cada trabajo pongo dedicación, creatividad y amor por los detalles para resaltar la belleza y el estilo único de cada persona.</motion.p>
       <motion.div className="hero-actions" initial={{ opacity: 0, transform: 'translateY(16px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.8 }}>
         <Magnetic><a className="button button-primary" href="#servicios"><span>Descubrir servicios</span><Arrow /></a></Magnetic>
         <a className="text-link" href="#sobre-mi">Conocer el enfoque <span aria-hidden="true">↓</span></a>
@@ -135,7 +137,7 @@ function Hero() {
           <span className="float-kicker">Enfoque</span><em>Belleza con intención</em>
         </motion.div>
       </motion.div>
-      <motion.span className="hero-stamp" initial={{ opacity: 0, transform: 'scale(0.9) rotate(-20deg)' }} animate={{ opacity: 1, transform: 'scale(1) rotate(0deg)' }} transition={{ duration: 1, ease: EASE_OUT, delay: 1.1 }}>A<small>atelier</small></motion.span>
+      <motion.span className="hero-stamp" initial={{ opacity: 0, transform: 'scale(0.9) rotate(-20deg)' }} animate={{ opacity: 1, transform: 'scale(1) rotate(0deg)' }} transition={{ duration: 1, ease: EASE_OUT, delay: 1.1 }}>A<small>Aleja Rojas</small></motion.span>
     </div>
 
     <motion.a href="#sobre-mi" className="scroll-cue" style={{ opacity: fade }} aria-label="Ir a Sobre mí">
@@ -167,8 +169,8 @@ function About() {
     </div>
     <div className="about-copy">
       <SectionHeading index="01" eyebrow="Sobre mí" title={<>Más que un look.<br /><em>Un momento para ti.</em></>} />
-      <Reveal as="p" className="lead">Este es un texto de muestra para contar la historia de [Nombre de la estilista]: su forma de entender la belleza, el cuidado y la transformación desde un lugar cercano y personal.</Reveal>
-      <Reveal as="p" delay={0.08}>La experiencia se construye contigo: escuchando lo que quieres, observando lo que te hace sentir bien y traduciendo todo eso en una propuesta que se sienta propia.</Reveal>
+      <Reveal as="p" className="lead">En este espacio podrás conocer un poco más sobre mi trabajo y mi pasión por la belleza. Soy Alejandra Rojas, estilista profesional, y cada servicio que realizo refleja mi dedicación, creatividad y atención a los detalles.</Reveal>
+      <Reveal as="p" delay={0.08}>Mi propósito es resaltar la belleza de cada persona y crear looks que la hagan sentir auténtica, segura y especial.</Reveal>
       <Stagger as="ol" className="pillars">
         {aboutPillars.map((pillar) => <motion.li key={pillar.n} variants={staggerChild}>
           <TiltCard className="pillar-card" max={5}><span className="pillar-n">{pillar.n}</span><strong>{pillar.title}</strong><span>{pillar.copy}</span></TiltCard>
@@ -247,7 +249,8 @@ function Handmade() {
     <div className="handmade-copy">
       <SectionHeading index="03" eyebrow="Otra forma de crear" title={<>También creo<br /><em>con mis manos.</em></>} />
       <Reveal as="p">{handmade.description}</Reveal>
-      <Reveal delay={0.1}><Magnetic><a className="button button-primary" href={handmade.link} target="_blank" rel="noreferrer"><span>Visitar catálogo</span><Arrow /></a></Magnetic></Reveal>
+      <Reveal className="handmade-logo-wrap"><img className="handmade-logo" src={handmadeLogo} alt="Hilos de Amor" /></Reveal>
+      <Reveal delay={0.1}><Magnetic><a className="button button-primary" href="/catalogo"><span>Visitar catálogo</span><Arrow /></a></Magnetic></Reveal>
     </div>
     <div className="craft-stack">
       {handmade.items.map((item, index) => <motion.div className={`craft-layer craft-layer-${index + 1}`} key={item.title} style={{ transform: depth[index % depth.length] }}>
@@ -320,9 +323,9 @@ function Gallery() {
 }
 
 const contactLinks = [
-  { label: 'Correo', value: 'correo@agregar.com', href: 'mailto:correo@agregar.com', external: false },
-  { label: 'Teléfono', value: '[Teléfono o WhatsApp]', href: 'tel:+000000000', external: false },
-  { label: 'Instagram', value: '@enlace_a_instagram', href: 'https://instagram.com', external: true },
+  { label: 'Correo', value: 'alejarojaspersonal@gmail.com', href: 'mailto:alejarojaspersonal@gmail.com', external: false },
+  { label: 'Teléfono', value: '310 349 70 78', href: 'tel:+573103497078', external: false },
+  { label: 'Instagram', value: '@mrojasbecerra', href: 'https://www.instagram.com/mrojasbecerra?exln=MTc3dmFreWZiejNjMg==', external: true },
 ] as const
 
 function Contact() {
@@ -334,7 +337,7 @@ function Contact() {
       <Reveal delay={0.15}><Magnetic strength={0.35}><a className="button button-primary button-xl" href={contactLinks[0].href}><span>Escríbeme</span><Arrow /></a></Magnetic></Reveal>
     </div>
     <div className="contact-details">
-      <Reveal as="p">La información de contacto es provisional y será actualizada cuando esté confirmada.</Reveal>
+      <Reveal as="p">No dudes en contactarme para cualquier consulta o reserva.</Reveal>
       <Stagger as="ul" className="contact-list">
         {contactLinks.map((link) => <motion.li key={link.label} variants={staggerChild}>
           <a className="contact-link" href={link.href} {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}><small>{link.label}</small><span>{link.value}</span><Arrow /></a>
@@ -346,16 +349,23 @@ function Contact() {
 
 function Footer() {
   return <footer className="footer section-shell">
-    <p className="footer-word" aria-hidden="true">atelier<em>01</em></p>
+    <p className="footer-word" aria-hidden="true">Aleja<em> Rojas</em></p>
     <div className="footer-row">
       <Brand />
-      <span>© 2024 [Nombre de la estilista] · Contenido provisional</span>
+      <span>© 2026 Laura Vargas · Desarrollo web</span>
       <a className="text-link" href="#inicio">Volver arriba ↑</a>
     </div>
   </footer>
 }
 
 function App() {
+  const [path, setPath] = useState(() => window.location.pathname)
+  useEffect(() => {
+    const onPopState = () => setPath(window.location.pathname)
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+  if (path.replace(/\/+$/, '') === '/catalogo') return <Catalog onBack={() => setPath('/')} />
   return <MotionConfig reducedMotion="user">
     <a className="skip-link" href="#sobre-mi">Saltar al contenido</a>
     <Header />
